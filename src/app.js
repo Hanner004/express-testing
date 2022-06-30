@@ -1,5 +1,5 @@
 import express from "express";
-import {v4} from "uuid";
+import * as uuid from "uuid";
 
 const app = express();
 
@@ -10,7 +10,7 @@ const pacients = [];
 app.post("/pacient", async (req, res) => {
   
   const pacient = {
-    id: v4(),
+    id: uuid.v4(),
     name: req.body.name,
     lastname: req.body.lastname,
     email: req.body.email,
@@ -27,8 +27,8 @@ app.post("/pacient", async (req, res) => {
 
   pacients.push(pacient);
 
-  return await res.status(200).json({
-    statusCode: 200,
+  return await res.status(201).json({
+    statusCode: 201,
     message: "pacient created",
     data: pacient,
   });

@@ -1,43 +1,71 @@
-import app from "../src/app";
 import request from "supertest";
+import * as uuid from "uuid";
+import app from "../src/app";
 
-describe("POST /pacient", () => {
+let pacientId;
 
-  test("should return with a status code 200", async () => {
-    const response = await request(app).post("/pacient");
-    expect(response.status).toBe(200);
+describe("app", () => {
+
+  describe("POST /pacient", () => {
+
+    const newPacient = {
+      id: uuid.v4(),
+      name: "Hanner",
+      lastname: "De La Hoz",
+      email: "pacient@info.com",
+    };
+
+    test("should return a new pacient", async () => {
+      await request(app)
+        .post("/pacient")
+        .send(newPacient)
+        .expect(201)
+        .expect("Content-Type", /json/)
+        .then((res) => {
+          expect(res.body.data).toBeInstanceOf(Object);
+          expect(res.body.data.id).toBeDefined();
+          expect(res.body.data.name).toBeDefined();
+          expect(res.body.data.lastname).toBeDefined();
+          expect(res.body.data.email).toBeDefined();
+
+          pacientId = res.body.data.id;
+
+        });
+    });
   });
 
-  test("should have a content-type: application/json", async () => {
-    const response = await request(app).post("/pacient");
-    expect(response.headers["content-type"]).toEqual(
-      expect.stringContaining("json")
-    );
+  describe("GET /pacients", () => {
+    test("should return pacients", async () => {
+      await request(app)
+        .get("/pacients")
+        .expect(200)
+        .expect("Content-Type", /json/)
+        .then((res) => {
+          expect(res.body.data).toBeInstanceOf(Array);
+          if (res.body.data.length > 0) {
+            expect(res.body.data[0].id).toBeDefined();
+            expect(res.body.data[0].name).toBeDefined();
+            expect(res.body.data[0].lastname).toBeDefined();
+            expect(res.body.data[0].email).toBeDefined();
+          }
+        });
+    });
   });
 
-  const newPacient = {
-    name: "Hanner",
-    lastname: "De La Hoz",
-    email: "pacient@info.com",
-  };
-
-  test("should return a new object with the information of the new patient", async () => {
-    const response = await request(app).post("/pacient").send(newPacient);
-    expect(response.body.data).toBeInstanceOf(Object);
-  });
-
-});
-
-describe("GET /pacients", () => {
-
-  test("should return with a status code 200", async () => {
-    const response = await request(app).get("/pacients");
-    expect(response.status).toBe(200);
-  });
-
-  test("should returns an array of patients in the data key", async () => {
-    const response = await request(app).get("/pacients");
-    expect(response.body.data).toBeInstanceOf(Array);
+  describe("GET /pacient/:pacientId", () => {
+    test("should return a pacient", async () => {
+      await request(app)
+        .get(`/pacient/${pacientId}`)
+        .expect(200)
+        .expect("Content-Type", /json/)
+        .then((res) => {
+          expect(res.body.data).toBeInstanceOf(Object);
+          expect(res.body.data.id).toBeDefined();
+          expect(res.body.data.name).toBeDefined();
+          expect(res.body.data.lastname).toBeDefined();
+          expect(res.body.data.email).toBeDefined();
+        });
+    });
   });
 
 });
