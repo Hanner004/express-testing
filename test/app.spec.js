@@ -5,9 +5,8 @@ import app from "../src/app";
 let pacientId;
 
 describe("app", () => {
-
   describe("POST /pacient", () => {
-
+    
     const newPacient = {
       id: uuid.v4(),
       name: "Hanner",
@@ -27,9 +26,7 @@ describe("app", () => {
           expect(res.body.data.name).toBeDefined();
           expect(res.body.data.lastname).toBeDefined();
           expect(res.body.data.email).toBeDefined();
-
           pacientId = res.body.data.id;
-
         });
     });
   });
@@ -68,4 +65,33 @@ describe("app", () => {
     });
   });
 
+  describe("PUT /pacient/:pacientId", () => {
+    test("should update a pacient", async () => {
+
+      const pacientToSave = {
+        name: "Hanner",
+        lastname: "De La Hoz",
+        email: "hanner@info.com",
+      };
+
+      await request(app)
+        .put(`/pacient/${pacientId}`)
+        .send(pacientToSave)
+        .expect(200)
+        .expect("Content-Type", /json/)
+        .then((res) => {
+          expect(res.body.data).toBeInstanceOf(Object);
+          expect(res.body.data.id).toBeDefined();
+          expect(res.body.data.name).toBeDefined();
+          expect(res.body.data.lastname).toBeDefined();
+          expect(res.body.data.email).toBeDefined();
+        });
+    });
+  });
+
+  describe("DELETE /pacient/:pacientId", () => {
+    test("should delete a pacient", async () => {
+      await request(app).delete(`/pacient/${pacientId}`).expect(200);
+    });
+  });
 });

@@ -8,7 +8,7 @@ app.use(express.json());
 const pacients = [];
 
 app.post("/pacient", async (req, res) => {
-  
+
   const pacient = {
     id: uuid.v4(),
     name: req.body.name,
@@ -32,7 +32,7 @@ app.post("/pacient", async (req, res) => {
     message: "pacient created",
     data: pacient,
   });
-
+  
 });
 
 app.get("/pacients", async (req, res) => {
@@ -60,6 +60,61 @@ app.get("/pacient/:pacientId", async (req, res) => {
       statusCode: 404,
       message: "pacient not found",
     });
+  }
+
+});
+
+app.put("/pacient/:pacientId", async (req, res) => {
+
+  const pacient = pacients.find(
+    (pacient) => pacient.id === req.params.pacientId
+  );
+
+  if (pacient) {
+
+    pacient.name = req.body.name;
+    pacient.lastname = req.body.lastname;
+    pacient.email = req.body.email;
+
+    return await res.status(200).json({
+      statusCode: 200,
+      message: "pacient updated",
+      data: pacient,
+    });
+
+  } else {
+
+    return await res.status(404).json({
+      statusCode: 404,
+      message: "pacient not found",
+    });
+
+  }
+
+});
+
+app.delete("/pacient/:pacientId", async (req, res) => {
+
+  const pacient = pacients.find(
+    (pacient) => pacient.id === req.params.pacientId
+  );
+
+  if (pacient) {
+
+    pacients.splice(pacients.indexOf(pacient), 1);
+
+    return await res.status(200).json({
+      statusCode: 200,
+      message: "pacient deleted",
+    });
+
+  } else {
+
+    return await res.status(404).json({
+      statusCode: 404,
+      message: "pacient not found",
+    });
+
   }
 
 });
