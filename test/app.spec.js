@@ -1,12 +1,12 @@
 import request from "supertest";
 import * as uuid from "uuid";
-import app from "../src/app";
+import app from "../src/app.js";
 
 let pacientId;
 
-describe("app", () => {
+describe("pacients", () => {
   
-  describe("POST /pacient", () => {
+  describe("POST /create-pacient", () => {
     
     const newPacient = {
       id: uuid.v4(),
@@ -17,7 +17,7 @@ describe("app", () => {
 
     test("should return a new pacient", async () => {
       await request(app)
-        .post("/pacient")
+        .post("/create-pacient")
         .send(newPacient)
         .expect(201)
         .expect("Content-Type", /json/)
@@ -32,10 +32,10 @@ describe("app", () => {
     });
   });
 
-  describe("GET /pacients", () => {
+  describe("GET /get-pacients", () => {
     test("should return pacients", async () => {
       await request(app)
-        .get("/pacients")
+        .get("/get-pacients")
         .expect(200)
         .expect("Content-Type", /json/)
         .then((res) => {
@@ -50,10 +50,10 @@ describe("app", () => {
     });
   });
 
-  describe("GET /pacient/:pacientId", () => {
+  describe("GET /get-pacient-by-id/:pacientId", () => {
     test("should return a pacient", async () => {
       await request(app)
-        .get(`/pacient/${pacientId}`)
+        .get(`/get-pacient-by-id/${pacientId}`)
         .expect(200)
         .expect("Content-Type", /json/)
         .then((res) => {
@@ -66,7 +66,7 @@ describe("app", () => {
     });
   });
 
-  describe("PUT /pacient/:pacientId", () => {
+  describe("PUT /update-pacient-by-id/:pacientId", () => {
     test("should update a pacient", async () => {
 
       const pacientToSave = {
@@ -76,7 +76,7 @@ describe("app", () => {
       };
 
       await request(app)
-        .put(`/pacient/${pacientId}`)
+        .put(`/update-pacient-by-id/${pacientId}`)
         .send(pacientToSave)
         .expect(200)
         .expect("Content-Type", /json/)
@@ -90,9 +90,9 @@ describe("app", () => {
     });
   });
 
-  describe("DELETE /pacient/:pacientId", () => {
+  describe("DELETE /delete-pacient-by-id/:pacientId", () => {
     test("should delete a pacient", async () => {
-      await request(app).delete(`/pacient/${pacientId}`).expect(200);
+      await request(app).delete(`/delete-pacient-by-id/${pacientId}`).expect(200);
     });
   });
   
